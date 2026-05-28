@@ -104,10 +104,21 @@ function MainContent() {
 }
 
 export default function Home() {
-  const { isAuthenticated, login, adminLogin } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { settings } = useSettings();
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [adminError, setAdminError] = useState('');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const auth = sessionStorage.getItem('wedding_auth');
+    const admin = sessionStorage.getItem('wedding_admin');
+    if (auth === 'true' || admin === 'true') {
+      // Force re-render - already handled by context
+    }
+  }, []);
 
   const handleAdminClick = () => {
     setShowAdminLogin(true);
@@ -117,15 +128,18 @@ export default function Home() {
     e.preventDefault();
     setAdminError('');
     if (adminPassword === 'wedding2024_admin') {
-      adminLogin(adminPassword);
-      setShowAdminLogin(false);
+      sessionStorage.setItem('wedding_auth', 'true');
+      sessionStorage.setItem('wedding_admin', 'true');
+      window.location.reload();
     } else {
       setAdminError('كلمة المرور غير صحيحة. استخدم: wedding2024_admin');
     }
   };
 
-  if (!isAuthenticated && !showAdminLogin) {
-    return <PasswordGate onAdminClick={handleAdminClick} />;
+  if (!isClient) return null;
+
+  if (isAuthenticated) {
+    return <MainContent />;
   }
 
   if (showAdminLogin) {
@@ -173,5 +187,5 @@ export default function Home() {
     );
   }
 
-  return <MainContent />;
+  return <PasswordGate onAdminClick={handleAdminClick} />;
 }

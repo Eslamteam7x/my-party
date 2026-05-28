@@ -17,19 +17,15 @@ export default function PasswordGate({ onAdminClick }: PasswordGateProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setError('');
-
-    await new Promise((r) => setTimeout(r, 600));
-
-    if (login(password)) {
-      return;
+    if (password === 'wedding2024') {
+      sessionStorage.setItem('wedding_auth', 'true');
+      window.location.reload();
+    } else {
+      setError('كلمة المرور غير صحيحة');
     }
-
-    setError('كلمة المرور غير صحيحة');
-    setIsSubmitting(false);
   };
 
   return (
