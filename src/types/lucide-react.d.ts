@@ -1,0 +1,50 @@
+declare module 'lucide-react' {
+  import { FC, SVGProps, ForwardRefExoticComponent, RefAttributes } from 'react';
+  
+  type LucideIcon = ForwardRefExoticComponent<Omit<SVGProps<SVGSVGElement>, 'ref'> & RefAttributes<SVGSVGElement>>;
+  
+  export const Heart: LucideIcon;
+  export const Shield: LucideIcon;
+  export const User: LucideIcon;
+  export const Lock: LucideIcon;
+  export const ArrowRight: LucideIcon;
+  export const Image: LucideIcon;
+  export const Video: LucideIcon;
+  export const Trash2: LucideIcon;
+  export const Download: LucideIcon;
+  export const Edit3: LucideIcon;
+  export const Save: LucideIcon;
+  export const ImagePlus: LucideIcon;
+  export const Film: LucideIcon;
+  export const HardDrive: LucideIcon;
+  export const Folder: LucideIcon;
+  export const Palette: LucideIcon;
+  export const Check: LucideIcon;
+  export const Plus: LucideIcon;
+  export const Upload: LucideIcon;
+  export const File: LucideIcon;
+  export const AlertCircle: LucideIcon;
+  export const Eye: LucideIcon;
+  export const EyeOff: LucideIcon;
+  export const X: LucideIcon;
+  export const ChevronLeft: LucideIcon;
+  export const ChevronRight: LucideIcon;
+  export const Play: LucideIcon;
+  export const Pause: LucideIcon;
+  export const Volume2: LucideIcon;
+  export const VolumeX: LucideIcon;
+  export const Music: LucideIcon;
+  export const Github: LucideIcon;
+  export const Menu: LucideIcon;
+  export const LayoutDashboard: LucideIcon;
+  export const Settings: LucideIcon;
+  export const LogOut: LucideIcon;
+  export const Globe: LucideIcon;
+  export const Database: LucideIcon;
+  export const Cloud: LucideIcon;
+  export const RefreshCw: LucideIcon;
+  export const Users: LucideIcon;
+  export const UserPlus: LucideIcon;
+  export const UserX: LucideIcon;
+  export const Key: LucideIcon;
+}

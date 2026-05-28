@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import {
   Save,
   RefreshCw,
-  Github,
   Cloud,
   Image,
   Music,
@@ -17,6 +16,7 @@ import {
   Database,
   Check,
   AlertCircle,
+  Upload,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
@@ -453,7 +453,7 @@ export default function Settings() {
 
                 <div className="space-y-4 p-4 rounded-2xl bg-luxury-gold/5 border border-luxury-gold/20">
                   <h3 className="font-sans font-medium text-luxury-dark flex items-center gap-2">
-                    <Github className="w-5 h-5" />
+                    <Upload className="w-5 h-5" />
                     إعدادات GitHub (للنشر)
                   </h3>
                   <div>
@@ -545,7 +545,7 @@ export default function Settings() {
                   <h3 className="font-sans font-medium text-luxury-dark">خيارات النشر</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="glass rounded-xl p-4 text-center">
-                      <Github className="w-8 h-8 text-luxury-gold mx-auto mb-3" />
+                      <Upload className="w-8 h-8 text-luxury-gold mx-auto mb-3" />
                       <p className="font-sans font-medium text-luxury-dark mb-1">GitHub Pages</p>
                       <p className="font-sans text-xs text-luxury-dark/50 mb-3">نشر مجاني وسريع</p>
                       <code className="text-xs bg-luxury-dark/5 px-3 py-1 rounded-lg block">

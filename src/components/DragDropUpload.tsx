@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Image, Video, File, Check, AlertCircle, Github } from 'lucide-react';
+import { Upload, Image, Video, File, Check, AlertCircle, Cloud } from 'lucide-react';
 import { compressImage, getImageDataUrl, generateId } from '@/lib/utils';
 import { uploadToGitHub, getGitHubConfig } from '@/lib/github-storage';
 import type { StoredFile } from '@/lib/storage';
@@ -134,7 +134,7 @@ export default function DragDropUpload({
             storageMode === 'github' ? 'bg-luxury-gold text-white' : 'glass text-luxury-dark/60'
           }`}
         >
-          <Github className="w-4 h-4" />
+          <Upload className="w-4 h-4" />
           رفع على GitHub
         </button>
       </div>
@@ -203,7 +203,7 @@ export default function DragDropUpload({
             >
               <div className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 ${isDragging ? 'bg-luxury-gold/20 scale-110' : 'glass-gold'}`}>
                 {storageMode === 'github' ? (
-                  <Github className="w-10 h-10 text-luxury-gold" />
+                  <Cloud className="w-10 h-10 text-luxury-gold" />
                 ) : (
                   <Upload className="w-10 h-10 text-luxury-gold" />
                 )}

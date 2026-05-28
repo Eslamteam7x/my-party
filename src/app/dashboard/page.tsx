@@ -17,10 +17,14 @@ import {
   Palette,
   Check,
   Plus,
+  Shield,
+  User,
+  Lock,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
 import { storage, type StoredFile } from '@/lib/storage';
+import { userStorage, type WeddingUser } from '@/lib/user-storage';
 import DragDropUpload from '@/components/DragDropUpload';
 import MasonryGallery from '@/components/MasonryGallery';
 import VideoGallery from '@/components/VideoGallery';
@@ -35,7 +39,7 @@ export default function Dashboard() {
   const [photos, setPhotos] = useState<StoredFile[]>([]);
   const [videos, setVideos] = useState<StoredFile[]>([]);
   const [albums, setAlbums] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'stats' | 'photos' | 'videos' | 'albums' | 'texts'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'photos' | 'videos' | 'albums' | 'texts' | 'users'>('stats');
   const [isClient, setIsClient] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -44,6 +48,11 @@ export default function Dashboard() {
   const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumDesc, setNewAlbumDesc] = useState('');
   const [showNewAlbum, setShowNewAlbum] = useState(false);
+
+  const [users, setUsers] = useState<WeddingUser[]>([]);
+  const [showNewUser, setShowNewUser] = useState(false);
+  const [newUser, setNewUser] = useState({ username: '', password: '', name: '' });
+  const [editingUser, setEditingUser] = useState<WeddingUser | null>(null);
 
   const [localTexts, setLocalTexts] = useState({
     brideName: '',
@@ -67,6 +76,7 @@ export default function Dashboard() {
     setPhotos(storage.getPhotos());
     setVideos(storage.getVideos());
     setAlbums(storage.getAlbums());
+    setUsers(userStorage.getUsers());
     setLocalTexts({
       brideName: settings.brideName,
       groomName: settings.groomName,
@@ -179,6 +189,7 @@ export default function Dashboard() {
     { id: 'videos', label: 'الفيديوهات', icon: Video },
     { id: 'albums', label: 'الألبومات', icon: Folder },
     { id: 'texts', label: 'النصوص', icon: Edit3 },
+    { id: 'users', label: 'المستخدمين', icon: User },
   ] as const;
 
   return (
@@ -485,6 +496,237 @@ export default function Dashboard() {
                   <div className="text-center py-12">
                     <Folder className="w-16 h-16 text-luxury-gold/30 mx-auto mb-4" />
                     <p className="font-sans text-luxury-dark/40">لا توجد ألبومات بعد. أنشئ ألبومك الأول.</p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === 'users' && (
+              <motion.div
+                key="users"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-sans text-xl text-luxury-dark">إدارة المستخدمين</h2>
+                  <button
+                    onClick={() => setShowNewUser(!showNewUser)}
+                    className="btn-luxury text-sm flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    مستخدم جديد
+                  </button>
+                </div>
+
+                <AnimatePresence>
+                  {showNewUser && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="glass rounded-2xl p-6 mb-6 overflow-hidden"
+                    >
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block font-sans text-sm text-luxury-dark/70 mb-2">الاسم (للتعريف)</label>
+                          <input
+                            type="text"
+                            value={newUser.name}
+                            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                            className="input-luxury"
+                            placeholder="مثلاً: أحمد"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-sans text-sm text-luxury-dark/70 mb-2">اسم المستخدم</label>
+                          <input
+                            type="text"
+                            value={newUser.username}
+                            onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                            className="input-luxury"
+                            placeholder="مثلاً: ahmed123"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-sans text-sm text-luxury-dark/70 mb-2">كلمة المرور</label>
+                          <input
+                            type="text"
+                            value={newUser.password}
+                            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                            className="input-luxury"
+                            placeholder="كلمة المرور"
+                          />
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => {
+                              if (!newUser.username.trim() || !newUser.password.trim()) {
+                                showToast('يرجى تعبئة الحقول المطلوبة', 'error');
+                                return;
+                              }
+                              const existing = userStorage.getUserByUsername(newUser.username);
+                              if (existing) {
+                                showToast('اسم المستخدم موجود مسبقاً', 'error');
+                                return;
+                              }
+                              const user: WeddingUser = {
+                                id: generateId(),
+                                username: newUser.username.trim(),
+                                password: newUser.password.trim(),
+                                name: newUser.name.trim() || newUser.username.trim(),
+                                allowedAlbums: [],
+                                createdAt: new Date().toISOString(),
+                              };
+                              userStorage.addUser(user);
+                              setUsers(userStorage.getUsers());
+                              setNewUser({ username: '', password: '', name: '' });
+                              setShowNewUser(false);
+                              showToast('تم إنشاء المستخدم', 'success');
+                            }}
+                            className="btn-luxury text-sm"
+                          >
+                            <Check className="w-4 h-4 inline ml-2" />
+                            إنشاء المستخدم
+                          </button>
+                          <button onClick={() => setShowNewUser(false)} className="btn-outline-luxury text-sm">
+                            إلغاء
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {users.length > 0 ? (
+                  <div className="space-y-3">
+                    {users.map((user) => (
+                      <GlassCard key={user.id}>
+                        <div className="p-5">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-10 h-10 rounded-full bg-luxury-gold/20 flex items-center justify-center">
+                                  <User className="w-5 h-5 text-luxury-gold" />
+                                </div>
+                                <div>
+                                  <h3 className="font-sans font-medium text-luxury-dark">
+                                    {user.name}
+                                    {user.name !== user.username && (
+                                      <span className="text-xs text-luxury-dark/40 block">@{user.username}</span>
+                                    )}
+                                  </h3>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-4 text-xs text-luxury-dark/50 mb-3">
+                                <span className="flex items-center gap-1">
+                                  <Lock className="w-3 h-3" />
+                                  {user.password}
+                                </span>
+                                <span>
+                                  {user.allowedAlbums.length === 0
+                                    ? 'جميع الألبومات'
+                                    : `${user.allowedAlbums.length} ألبوم/ألبومات`}
+                                </span>
+                              </div>
+
+                              <div className="space-y-2">
+                                {editingUser?.id === user.id ? (
+                                  <div>
+                                    <label className="block font-sans text-xs text-luxury-dark/60 mb-2">
+                                      الألبومات المسموح بها (اترك فارغاً للسماح بالكل):
+                                    </label>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                      {albums.map((album) => (
+                                        <button
+                                          key={album.id}
+                                          onClick={() => {
+                                            const updated = editingUser.allowedAlbums.includes(album.id)
+                                              ? editingUser.allowedAlbums.filter((id) => id !== album.id)
+                                              : [...editingUser.allowedAlbums, album.id];
+                                            setEditingUser({ ...editingUser, allowedAlbums: updated });
+                                          }}
+                                          className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
+                                            editingUser.allowedAlbums.includes(album.id)
+                                              ? 'bg-luxury-gold text-white'
+                                              : 'glass text-luxury-dark/60'
+                                          }`}
+                                        >
+                                          {album.name}
+                                        </button>
+                                      ))}
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={() => {
+                                          userStorage.updateUser(user.id, { allowedAlbums: editingUser.allowedAlbums });
+                                          setUsers(userStorage.getUsers());
+                                          setEditingUser(null);
+                                          showToast('تم حفظ الصلاحيات', 'success');
+                                        }}
+                                        className="px-4 py-1.5 bg-green-500 text-white rounded-lg text-xs"
+                                      >
+                                        <Save className="w-3 h-3 inline ml-1" />
+                                        حفظ
+                                      </button>
+                                      <button
+                                        onClick={() => setEditingUser(null)}
+                                        className="px-4 py-1.5 glass text-luxury-dark/60 rounded-lg text-xs"
+                                      >
+                                        إلغاء
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-wrap gap-2">
+                                    <button
+                                      onClick={() => setEditingUser({ ...user })}
+                                      className="px-3 py-1.5 bg-luxury-gold/20 text-luxury-gold rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Shield className="w-3 h-3" />
+                                      صلاحيات الألبومات
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        const newPw = prompt('أدخل كلمة المرور الجديدة:');
+                                        if (newPw && newPw.trim()) {
+                                          userStorage.updateUser(user.id, { password: newPw.trim() });
+                                          setUsers(userStorage.getUsers());
+                                          showToast('تم تغيير كلمة المرور', 'success');
+                                        }
+                                      }}
+                                      className="px-3 py-1.5 glass text-luxury-dark/60 rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Lock className="w-3 h-3" />
+                                      تغيير كلمة المرور
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        if (confirm(`هل تريد حذف المستخدم "${user.name}"؟`)) {
+                                          userStorage.removeUser(user.id);
+                                          setUsers(userStorage.getUsers());
+                                          showToast('تم حذف المستخدم', 'success');
+                                        }
+                                      }}
+                                      className="px-3 py-1.5 bg-red-500/10 text-red-500 rounded-lg text-xs flex items-center gap-1"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                      حذف
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </GlassCard>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <User className="w-16 h-16 text-luxury-gold/30 mx-auto mb-4" />
+                    <p className="font-sans text-luxury-dark/40">لا يوجد مستخدمون بعد. أنشئ مستخدم جديد.</p>
                   </div>
                 )}
               </motion.div>
