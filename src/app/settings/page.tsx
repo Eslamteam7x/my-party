@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
-import { saveGitHubConfig } from '@/lib/github-storage';
+import { saveGitHubConfig, getGitHubConfig } from '@/lib/github-storage';
 import LuxuryHeader from '@/components/LuxuryHeader';
 import GlassCard from '@/components/GlassCard';
 
@@ -89,6 +89,18 @@ export default function Settings() {
       disableDownload: settings.disableDownload,
     });
     setLocalTheme(settings.theme);
+
+    // Load GitHub config
+    const ghConfig = getGitHubConfig();
+    if (ghConfig) {
+      setLocalStorageConfig((prev) => ({
+        ...prev,
+        githubToken: ghConfig.token || '',
+        githubRepoOwner: ghConfig.owner || '',
+        githubRepoName: ghConfig.repo || '',
+        githubBranch: ghConfig.branch || 'main',
+      }));
+    }
   }, [settings]);
 
   const handleSave = () => {
