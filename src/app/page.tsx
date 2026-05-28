@@ -131,7 +131,7 @@ export default function Home() {
             <h2 className="font-script text-3xl text-luxury-dark mb-2">دخول المدير</h2>
             <p className="font-sans text-sm text-luxury-dark/60">كلمة مرور المدير</p>
           </div>
-          <form onSubmit={(e) => { e.preventDefault(); setAdminError(''); if (adminLogin(adminPassword)) setShowAdminLogin(false); else setAdminError('كلمة المرور غير صحيحة. استخدم: باسورد_الموقع_admin'); }}>
+          <form onSubmit={(e) => { e.preventDefault(); setAdminError(''); if (adminLogin(adminPassword)) setShowAdminLogin(false); else setAdminError('كلمة المرور غير صحيحة. استخدم: wedding2024_admin'); }}>
             <input
               type="password"
               value={adminPassword}
