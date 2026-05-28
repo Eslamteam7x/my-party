@@ -29,11 +29,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (admin === 'true') setIsAdmin(true);
   }, []);
 
-  const getSitePassword = () => process.env.NEXT_PUBLIC_SITE_PASSWORD || 'wedding2024';
+  const SITE_PASSWORD = 'wedding2024';
+  const ADMIN_PASSWORD = 'wedding2024_admin';
 
   const login = useCallback((password: string): boolean => {
-    const sitePassword = getSitePassword();
-    if (password === sitePassword || password === 'wedding2024') {
+    if (password === SITE_PASSWORD) {
       setIsAuthenticated(true);
       sessionStorage.setItem('wedding_auth', 'true');
       return true;
@@ -42,9 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const adminLogin = useCallback((password: string): boolean => {
-    const sitePassword = getSitePassword();
-    const expectedAdminPw = sitePassword + '_admin';
-    if (password === expectedAdminPw || password === 'wedding2024_admin') {
+    if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       setIsAdmin(true);
       sessionStorage.setItem('wedding_auth', 'true');
