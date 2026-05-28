@@ -1,0 +1,52 @@
+declare module 'lucide-react' {
+  import { FC, SVGProps } from 'react';
+  
+  interface IconProps extends SVGProps<SVGSVGElement> {
+    size?: number | string;
+    absoluteStrokeWidth?: boolean;
+  }
+  
+  type Icon = FC<IconProps>;
+  
+  export const Heart: Icon;
+  export const Lock: Icon;
+  export const Eye: Icon;
+  export const EyeOff: Icon;
+  export const Shield: Icon;
+  export const ArrowDown: Icon;
+  export const Play: Icon;
+  export const Pause: Icon;
+  export const Volume2: Icon;
+  export const VolumeX: Icon;
+  export const Music: Icon;
+  export const X: Icon;
+  export const Menu: Icon;
+  export const Home: Icon;
+  export const Image: Icon;
+  export const Video: Icon;
+  export const LayoutDashboard: Icon;
+  export const Settings: Icon;
+  export const LogOut: Icon;
+  export const PanelRightOpen: Icon;
+  export const PanelRightClose: Icon;
+  export const Upload: Icon;
+  export const File: Icon;
+  export const Check: Icon;
+  export const AlertCircle: Icon;
+  export const Trash2: Icon;
+  export const Download: Icon;
+  export const Edit3: Icon;
+  export const Save: Icon;
+  export const ImagePlus: Icon;
+  export const Film: Icon;
+  export const HardDrive: Icon;
+  export const RefreshCw: Icon;
+  export const PanelLeft: Icon;
+  export const Github: Icon;
+  export const Cloud: Icon;
+  export const Palette: Icon;
+  export const Globe: Icon;
+  export const Database: Icon;
+  export const ChevronLeft: Icon;
+  export const ChevronRight: Icon;
+}
