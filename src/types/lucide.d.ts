@@ -1,13 +1,10 @@
 declare module 'lucide-react' {
   import { FC, SVGProps } from 'react';
-  
   interface IconProps extends SVGProps<SVGSVGElement> {
     size?: number | string;
     absoluteStrokeWidth?: boolean;
   }
-  
   type Icon = FC<IconProps>;
-  
   export const Heart: Icon;
   export const Lock: Icon;
   export const Eye: Icon;
@@ -16,8 +13,6 @@ declare module 'lucide-react' {
   export const ArrowDown: Icon;
   export const Play: Icon;
   export const Pause: Icon;
-  export const Volume2: Icon;
-  export const VolumeX: Icon;
   export const Music: Icon;
   export const X: Icon;
   export const Menu: Icon;
@@ -49,4 +44,11 @@ declare module 'lucide-react' {
   export const Database: Icon;
   export const ChevronLeft: Icon;
   export const ChevronRight: Icon;
+  export const Folder: Icon;
+  export const FolderPlus: Icon;
+  export const Plus: Icon;
+  export const Volume2: Icon;
+  export const VolumeX: Icon;
+  export const Type: any;
+  export const Album: any;
 }

@@ -123,6 +123,35 @@ export const storage = {
     Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
   },
 
+  addAlbum: (album: { id: string; name: string; description?: string }) => {
+    const albums = storage.getAlbums();
+    albums.push(album);
+    storage.saveAlbums(albums);
+    return albums;
+  },
+
+  removeAlbum: (id: string) => {
+    const albums = storage.getAlbums().filter((a: any) => a.id !== id);
+    storage.saveAlbums(albums);
+    const photos = storage.getPhotos().map((p) =>
+      p.album === id ? { ...p, album: undefined } : p
+    );
+    storage.savePhotos(photos);
+    return albums;
+  },
+
+  updateAlbum: (id: string, updates: Record<string, unknown>) => {
+    const albums = storage.getAlbums().map((a: any) =>
+      a.id === id ? { ...a, ...updates } : a
+    );
+    storage.saveAlbums(albums);
+    return albums;
+  },
+
+  getPhotosByAlbum: (albumId: string) => {
+    return storage.getPhotos().filter((p) => p.album === albumId);
+  },
+
   exportData: () => {
     return {
       photos: storage.getPhotos(),

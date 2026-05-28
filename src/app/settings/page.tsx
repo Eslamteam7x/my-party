@@ -128,6 +128,7 @@ export default function Settings() {
     { id: 'general', label: 'عام', icon: Globe },
     { id: 'theme', label: 'المظهر', icon: Palette },
     { id: 'storage', label: 'التخزين', icon: Database },
+    { id: 'domain', label: 'الدومين', icon: Globe },
     { id: 'music', label: 'الموسيقى', icon: Music },
     { id: 'security', label: 'الأمان', icon: Lock },
   ];
@@ -480,6 +481,88 @@ export default function Settings() {
                         className="input-luxury"
                       />
                     </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeSection === 'domain' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-6"
+              >
+                <h2 className="font-sans text-xl text-luxury-dark mb-6">إعدادات الدومين والنشر</h2>
+
+                <div className="space-y-4 p-4 rounded-2xl bg-luxury-gold/5 border border-luxury-gold/20">
+                  <h3 className="font-sans font-medium text-luxury-dark">رابط الموقع</h3>
+                  <div>
+                    <label className="block font-sans text-sm text-luxury-dark/70 mb-2">رابط الموقع الحالي</label>
+                    <input
+                      type="url"
+                      value={typeof window !== 'undefined' ? window.location.origin : ''}
+                      className="input-luxury bg-white/30 cursor-not-allowed"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-sans text-sm text-luxury-dark/70 mb-2">الدومين المخصص (اختياري)</label>
+                    <input
+                      type="text"
+                      className="input-luxury"
+                      placeholder="https://your-domain.com"
+                    />
+                    <p className="font-sans text-xs text-luxury-dark/40 mt-2">
+                      يمكنك استخدام دومين مخصص عن طريق إضافة سجل CNAME في إعدادات الدومين الخاص بك.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 p-4 rounded-2xl bg-luxury-gold/5 border border-luxury-gold/20">
+                  <h3 className="font-sans font-medium text-luxury-dark">خيارات النشر</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="glass rounded-xl p-4 text-center">
+                      <Github className="w-8 h-8 text-luxury-gold mx-auto mb-3" />
+                      <p className="font-sans font-medium text-luxury-dark mb-1">GitHub Pages</p>
+                      <p className="font-sans text-xs text-luxury-dark/50 mb-3">نشر مجاني وسريع</p>
+                      <code className="text-xs bg-luxury-dark/5 px-3 py-1 rounded-lg block">
+                        username.github.io/repo
+                      </code>
+                    </div>
+                    <div className="glass rounded-xl p-4 text-center">
+                      <Globe className="w-8 h-8 text-luxury-gold mx-auto mb-3" />
+                      <p className="font-sans font-medium text-luxury-dark mb-1">Vercel</p>
+                      <p className="font-sans text-xs text-luxury-dark/50 mb-3">أفضل خيار لـ Next.js</p>
+                      <code className="text-xs bg-luxury-dark/5 px-3 py-1 rounded-lg block">
+                        vercel.com
+                      </code>
+                    </div>
+                  </div>
+                  <p className="font-sans text-xs text-luxury-dark/40 mt-2">
+                    نصيحة: استخدم Vercel للحصول على أفضل أداء لموقع Next.js. فقط اربط مستودع GitHub وسيتم النشر تلقائياً.
+                  </p>
+                </div>
+
+                <div className="space-y-4 p-4 rounded-2xl bg-luxury-gold/5 border border-luxury-gold/20">
+                  <h3 className="font-sans font-medium text-luxury-dark">SEO وإعدادات المشاركة</h3>
+                  <div>
+                    <label className="block font-sans text-sm text-luxury-dark/70 mb-2">وصف الموقع (Meta Description)</label>
+                    <textarea
+                      className="input-luxury h-20 resize-none"
+                      placeholder="موقع زفاف شخصي فاخر"
+                      defaultValue="موقع زفاف شخصي فاخر لمشاركة لحظات الفرح مع الأهل والأصدقاء"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-sans text-sm text-luxury-dark/70 mb-2">رابط صورة المشاركة (OG Image)</label>
+                    <input
+                      type="url"
+                      className="input-luxury"
+                      placeholder="https://example.com/og-image.jpg"
+                    />
+                    <p className="font-sans text-xs text-luxury-dark/40 mt-2">
+                      هذه الصورة ستظهر عند مشاركة الرابط في وسائل التواصل الاجتماعي.
+                    </p>
                   </div>
                 </div>
               </motion.div>
