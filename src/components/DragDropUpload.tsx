@@ -2,8 +2,9 @@
 
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Image, Video, X, File, Check, AlertCircle } from 'lucide-react';
+import { Upload, Image, Video, File, Check, AlertCircle, Github } from 'lucide-react';
 import { compressImage, getImageDataUrl, generateId } from '@/lib/utils';
+import { uploadToGitHub, getGitHubConfig } from '@/lib/github-storage';
 import type { StoredFile } from '@/lib/storage';
 
 interface DragDropUploadProps {
@@ -22,13 +23,18 @@ export default function DragDropUpload({
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [storageMode, setStorageMode] = useState<'local' | 'github'>('local');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const ghConfig = typeof window !== 'undefined' ? getGitHubConfig() : null;
 
   const handleFiles = useCallback(async (fileList: FileList) => {
     setUploadError(null);
     setUploading(true);
     setUploadProgress(0);
+    setUploadStatus('جاري معالجة الملفات...');
 
     const files = Array.from(fileList);
     const validFiles: StoredFile[] = [];
@@ -42,28 +48,37 @@ export default function DragDropUpload({
 
       try {
         let dataUrl: string;
+        const id = generateId();
 
-        if (file.type.startsWith('image/')) {
-          const compressed = await compressImage(file);
-          dataUrl = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.readAsDataURL(compressed);
+        if (storageMode === 'github' && ghConfig) {
+          setUploadStatus(`جاري رفع ${file.name} إلى GitHub...`);
+          const url = await uploadToGitHub(file, (pct) => {
+            setUploadProgress(Math.round((pct + processed * 100) / files.length));
           });
+          dataUrl = url;
         } else {
-          dataUrl = await getImageDataUrl(file);
+          if (file.type.startsWith('image/')) {
+            const compressed = await compressImage(file);
+            dataUrl = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.readAsDataURL(compressed);
+            });
+          } else {
+            dataUrl = await getImageDataUrl(file);
+          }
         }
 
         validFiles.push({
-          id: generateId(),
+          id,
           dataUrl,
           name: file.name,
           type: file.type,
           size: file.size,
           createdAt: new Date().toISOString(),
         });
-      } catch {
-        setUploadError(`فشل في معالجة الملف ${file.name}`);
+      } catch (err: any) {
+        setUploadError(`فشل في رفع ${file.name}: ${err.message}`);
       }
 
       processed++;
@@ -71,12 +86,14 @@ export default function DragDropUpload({
     }
 
     if (validFiles.length > 0) {
+      setUploadStatus(`تم رفع ${validFiles.length} ملف بنجاح`);
       onFilesAdded(validFiles);
     }
 
     setUploading(false);
     setUploadProgress(0);
-  }, [maxSize, onFilesAdded]);
+    setUploadStatus('');
+  }, [maxSize, onFilesAdded, storageMode, ghConfig]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -101,6 +118,33 @@ export default function DragDropUpload({
 
   return (
     <div className="w-full">
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <button
+          onClick={() => setStorageMode('local')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all ${
+            storageMode === 'local' ? 'bg-luxury-gold text-white' : 'glass text-luxury-dark/60'
+          }`}
+        >
+          <Upload className="w-4 h-4" />
+          تخزين محلي
+        </button>
+        <button
+          onClick={() => setStorageMode('github')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all ${
+            storageMode === 'github' ? 'bg-luxury-gold text-white' : 'glass text-luxury-dark/60'
+          }`}
+        >
+          <Github className="w-4 h-4" />
+          رفع على GitHub
+        </button>
+      </div>
+
+      {storageMode === 'github' && !ghConfig && (
+        <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-sm text-amber-600 text-center">
+          ⚠️ لم يتم إعداد GitHub. اذهب إلى <strong>الإعدادات → التخزين</strong> وأضف التوكن.
+        </div>
+      )}
+
       <motion.div
         initial={false}
         animate={isDragging ? { scale: 1.02 } : { scale: 1 }}
@@ -139,7 +183,7 @@ export default function DragDropUpload({
               <div className="w-16 h-16 rounded-full glass-gold flex items-center justify-center">
                 <Upload className="w-8 h-8 text-luxury-gold animate-bounce" />
               </div>
-              <p className="font-sans text-luxury-dark/70">جاري رفع الملفات...</p>
+              <p className="font-sans text-luxury-dark/70">{uploadStatus || 'جاري الرفع...'}</p>
               <div className="w-full max-w-xs bg-white/30 rounded-full h-2 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
@@ -158,7 +202,11 @@ export default function DragDropUpload({
               className="flex flex-col items-center gap-4"
             >
               <div className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 ${isDragging ? 'bg-luxury-gold/20 scale-110' : 'glass-gold'}`}>
-                <Upload className="w-10 h-10 text-luxury-gold" />
+                {storageMode === 'github' ? (
+                  <Github className="w-10 h-10 text-luxury-gold" />
+                ) : (
+                  <Upload className="w-10 h-10 text-luxury-gold" />
+                )}
               </div>
               <div>
                 <p className="font-sans text-lg text-luxury-dark/80">

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSettings } from '@/context/SettingsContext';
+import { saveGitHubConfig } from '@/lib/github-storage';
 import LuxuryHeader from '@/components/LuxuryHeader';
 import GlassCard from '@/components/GlassCard';
 
@@ -111,6 +112,16 @@ export default function Settings() {
         branch: localStorageConfig.githubBranch,
       },
     });
+
+    // Save GitHub config for image upload
+    saveGitHubConfig({
+      token: localStorageConfig.githubToken,
+      owner: localStorageConfig.githubRepoOwner,
+      repo: localStorageConfig.githubRepoName,
+      branch: localStorageConfig.githubBranch,
+      folder: 'media',
+    });
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
