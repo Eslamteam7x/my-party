@@ -107,6 +107,7 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
+  const [adminError, setAdminError] = useState('');
   const { adminLogin } = useAuth();
 
   const handleAdminClick = () => {
@@ -130,15 +131,24 @@ export default function Home() {
             <h2 className="font-script text-3xl text-luxury-dark mb-2">دخول المدير</h2>
             <p className="font-sans text-sm text-luxury-dark/60">كلمة مرور المدير</p>
           </div>
-          <form onSubmit={(e) => { e.preventDefault(); if (adminLogin(adminPassword)) setShowAdminLogin(false); }}>
+          <form onSubmit={(e) => { e.preventDefault(); setAdminError(''); if (adminLogin(adminPassword)) setShowAdminLogin(false); else setAdminError('كلمة المرور غير صحيحة. استخدم: باسورد_الموقع_admin'); }}>
             <input
               type="password"
               value={adminPassword}
-              onChange={(e) => setAdminPassword(e.target.value)}
+              onChange={(e) => { setAdminPassword(e.target.value); setAdminError(''); }}
               placeholder="كلمة مرور المدير"
               className="input-luxury mb-4 text-center"
               autoFocus
             />
+            {adminError && (
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-500 text-sm text-center font-sans bg-red-500/10 rounded-xl px-4 py-3 mb-4"
+              >
+                {adminError}
+              </motion.p>
+            )}
             <button type="submit" className="btn-luxury w-full">دخول</button>
             <button
               type="button"
