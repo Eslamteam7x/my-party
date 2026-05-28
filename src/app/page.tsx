@@ -127,12 +127,12 @@ export default function Home() {
   const handleAdminSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setAdminError('');
-    if (adminPassword === 'wedding2024_admin') {
+    if (adminPassword === 'Eslam2026') {
       sessionStorage.setItem('wedding_auth', 'true');
       sessionStorage.setItem('wedding_admin', 'true');
       window.location.reload();
     } else {
-      setAdminError('كلمة المرور غير صحيحة. استخدم: wedding2024_admin');
+      setAdminError('كلمة المرور غير صحيحة. استخدم: Eslam2026');
     }
   };
 

@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const adminLogin = useCallback((password: string): boolean => {
-    if (password === 'wedding2024_admin') {
+    if (password === 'Eslam2026') {
       sessionStorage.setItem('wedding_auth', 'true');
       sessionStorage.setItem('wedding_admin', 'true');
       setIsAuthenticated(true);
