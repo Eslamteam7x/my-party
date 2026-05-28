@@ -104,14 +104,24 @@ function MainContent() {
 }
 
 export default function Home() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login, adminLogin } = useAuth();
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [adminError, setAdminError] = useState('');
-  const { adminLogin } = useAuth();
 
   const handleAdminClick = () => {
     setShowAdminLogin(true);
+  };
+
+  const handleAdminSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminError('');
+    if (adminPassword === 'wedding2024_admin') {
+      adminLogin(adminPassword);
+      setShowAdminLogin(false);
+    } else {
+      setAdminError('كلمة المرور غير صحيحة. استخدم: wedding2024_admin');
+    }
   };
 
   if (!isAuthenticated && !showAdminLogin) {
@@ -131,7 +141,7 @@ export default function Home() {
             <h2 className="font-script text-3xl text-luxury-dark mb-2">دخول المدير</h2>
             <p className="font-sans text-sm text-luxury-dark/60">كلمة مرور المدير</p>
           </div>
-          <form onSubmit={(e) => { e.preventDefault(); setAdminError(''); if (adminLogin(adminPassword)) setShowAdminLogin(false); else setAdminError('كلمة المرور غير صحيحة. استخدم: wedding2024_admin'); }}>
+          <form onSubmit={handleAdminSubmit}>
             <input
               type="password"
               value={adminPassword}
